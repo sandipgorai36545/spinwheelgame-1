@@ -1,15 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spin Wheel Game</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spin the Wheel</title>
+    <style>
+        /* Basic resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background: url('https://i.postimg.cc/fbfzGZFS/pexels-anna-alexes-18139455-8080278.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .ad-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Hide all ads initially */
+        .desktop-ads, .mobile-ads {
+            display: none;
+        }
+
+        /* Desktop layout */
+        @media (min-width: 601px) {
+            #desktop-top-ad,
+            #desktop-bottom-ad {
+                width: 728px;
+                height: 90px;
+                margin: 10px 0;
+                display: flex;
+            }
+
+            .desktop-ads {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 10px;
+            }
+
+            .side-ad {
+                width: 350px;
+                height: 250px;
+            }
+
+            #desktop-middle-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                max-width: 1200px;
+                width: 100%;
+            }
+
+            #app-wrapper {
+                width: 400px;
+                background-color: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(12px);
+                border-radius: 20px;
+                padding: 20px 15px 30px 15px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-sizing: border-box;
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 600px) {
+            .mobile-ads {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+                margin-bottom: 10px;
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+
+            .mobile-ads .ad {
+                width: 320px !important;
+                height: 50px !important;
+                max-width: 100vw;
+            }
+
+            #app-wrapper {
+                max-width: 100vw;
+                padding: 15px 10px 25px 10px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            #spin-btn {
+                width: 80px;
+            }
+
+            #headline {
+                width: 100%;
+                max-width: 280px;
+                margin-bottom: 10px;
+            }
+
+            #wheel-container {
+                width: 70vw;
+                height: 70vw;
+                max-width: 280px;
+                max-height: 280px;
+            }
+        }
+
+        /* Common */
+        #app-card {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-sizing: border-box;
+        }
+
+        #headline {
+            width: 85%;
+            max-width: 320px;
+            margin-bottom: 5px;
+            height: auto;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        #wheel-container {
+            position: relative;
+            width: 80vw;
+            max-width: 300px;
+            height: 80vw;
+            max-height: 300px;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 4s cubic-bezier(0.25,0.1,0.25,1);
+            touch-action: none;
+            user-select: none;
+        }
+
+        #pointer {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(0deg);
+            width: 30px;
+            height: 30px;
+            z-index: 10;
+        }
+
+        #pointer::before {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            margin: auto;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid red;
+        }
+
+        #spin-btn {
+            width: 100px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 40px;
+            user-select: none;
+        }
+
+        #spin-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 <body>
-    <h1>Spin the Wheel</h1>
-    <canvas id="wheelcanvas" width="500" height="500"></canvas>
-    <button onclick="spin()">Spin</button>
-    <script src="script.js"></script>
+    <!-- Mobile Ads (4 x 320x50 banners) -->
+    <div class="ad-wrapper mobile-ads">
+        <div class="ad">
+            <script type='text/javascript' src='//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js'></script>
+        </div>
+        <div class="ad">
+            <script type='text/javascript' src='//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js'></script>
+        </div>
+        <div class="ad">
+            <script type='text/javascript' src='//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js'></script>
+        </div>
+        <div class="ad">
+            <script type='text/javascript' src='//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js'></script>
+        </div>
+    </div>
+
+    <!-- Desktop Ads top 728x90 banner -->
+    <div id="desktop-top-ad" class="desktop-ads">
+        <script type="text/javascript">
+            atOptions = {
+                'key': '3345b91d85a80d5f043b5505c11e549c',
+                'format': 'iframe',
+                'height': 90,
+                'width': 728,
+                'params': {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/3345b91d85a80d5f043b5505c11e549c/invoke.js"></script>
+    </div>
+
+    <!-- Desktop Middle section with ads and blur card -->
+    <div id="desktop-middle-section" class="desktop-ads">
+        <div class="side-ad ad">
+            <script type="text/javascript">
+                atOptions = {
+                    'key': 'fa9efa891f5c12cc89508d4a3bd51b2a',
+                    'format': 'iframe',
+                    'height': 250,
+                    'width': 350,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/fa9efa891f5c12cc89508d4a3bd51b2a/invoke.js"></script>
+        </div>
+
+        <div id="app-wrapper">
+            <div id="app-card">
+                <img id="headline" src="https://i.postimg.cc/V64bYTs7/20250521-012721-removebg-preview.png" alt="Headline" />
+
+                <div id="wheel-container">
+                    <img id="wheel" src="https://i.ibb.co/M5SG6sNs/20250521-122519.png" alt="Spin Wheel" />
+                    <div id="pointer"></div>
+                </div>
+
+                <img id="spin-btn" src="https://i.postimg.cc/DyTtVM4V/images-19-removebg-preview.png" alt="Spin Now" />
+            </div>
+        </div>
+
+        <div class="side-ad ad">
+            <script type="text/javascript">
+                atOptions = {
+                    'key': 'fa9efa891f5c12cc89508d4a3bd51b2a',
+                    'format': 'iframe',
+                    'height': 250,
+                    'width': 350,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/fa9efa891f5c12cc89508d4a3bd51b2a/invoke.js"></script>
+        </div>
+    </div>
+
+    <!-- Desktop Ads bottom 728x90 banner -->
+    <div id="desktop-bottom-ad" class="desktop-ads">
+        <script type="text/javascript">
+            atOptions = {
+                'key': '3345b91d85a80d5f043b5505c11e549c',
+                'format': 'iframe',
+                'height': 90,
+                'width': 728,
+                'params': {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/3345b91d85a80d5f043b5505c11e549c/invoke.js"></script>
+    </div>
+
+    <!-- Popunder and Social Bar Ads (all devices) -->
+    <div style="display:none;">
+        <script type='text/javascript' src='//pl26745835.profitableratecpm.com/c3/39/f6/c339f6d9e6491ad609b6b23f1c55210e.js'></script>
+        <script type='text/javascript' src='//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js'></script>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <audio id="celebration-sound" src="https://www.myinstants.com/media/sounds/tada-fanfare.mp3" preload="auto"></audio>
+
+    <script>
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spin-btn');
+        const sound = document.getElementById('celebration-sound');
+
+        let currentDeg = 0;
+        let spinning = false;
+        let spinCount = 0;
+
+        function firePopunderAd() {
+            const existingScript = document.getElementById('popunder-ad-script');
+            if (existingScript) {
+                existingScript.remove();
+            }
+            const script = document.createElement('script');
+            script.id = 'popunder-ad-script';
+            script.type = 'text/javascript';
+            script.src = '//pl26745835.profitableratecpm.com/c3/39/f6/c339f6d9e6491ad609b6b23f1c55210e.js';
+            document.body.appendChild(script);
+        }
+
+        function fireSocialBarAd() {
+            const existingScript = document.getElementById('social-bar-ad-script');
+            if (existingScript) {
+                existingScript.remove();
+            }
+            const script = document.createElement('script');
+            script.id = 'social-bar-ad-script';
+            script.type = 'text/javascript';
+            script.src = '//pl26745942.profitableratecpm.com/c6/93/41/c693415f40ae469d64c5819982736266.js';
+            document.body.appendChild(script);
+        }
+
+        // Fire popunder ad on page load (user visit)
+        window.addEventListener('load', firePopunderAd);
+
+        // Fire popunder ad on exit intent (mouse leaving window)
+        window.addEventListener('mouseout', function(event) {
+            if (!event.toElement && !event.relatedTarget) {
+                firePopunderAd();
+            }
+        });
+
+        // Fire popunder ad on beforeunload event
+        window.addEventListener('beforeunload', firePopunderAd);
+
+        // Fire social bar ad on load
+        window.addEventListener('load', fireSocialBarAd);
+
+        spinBtn.addEventListener('click', () => {
+            if (spinning) return;
+            spinning = true;
+            spinBtn.style.pointerEvents = 'none';
+
+            const extraDeg = Math.floor(Math.random() * 360);
+            const spins = 3;
+
+            currentDeg += (spins * 360) + extraDeg;
+            wheel.style.transition = 'transform 4s ease-out';
+            wheel.style.transform = rotate(${currentDeg}deg);
+
+            setTimeout(() => {
+                sound.currentTime = 0;
+                sound.play();
+
+                confetti({
+                    particleCount: 120,
+                    spread: 90,
+                    origin: { y: 0.6 },
+                });
+
+                spinning = false;
+                spinBtn.style.pointerEvents = 'auto';
+                spinCount++;
+
+                // Fire popunder ads on 1st, 2nd, 3rd, 4th, and 7th spins
+                if ([1, 2, 3, 4, 7].includes(spinCount)) {
+                    firePopunderAd();
+                }
+
+                // Fire social bar ads on 1st, 4th, and 8th spins
+                if ([1, 4, 8].includes(spinCount)) {
+                    fireSocialBarAd();
+                }
+            }, 4000);
+        });
+    </script>
 </body>
 </html>
